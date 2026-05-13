@@ -35,9 +35,7 @@ index.html
 
 ## Preview
 
-```md
 ![Todo App Screenshot](./screenshots/Todo.png)
-```
 
 ## Installation & Setup
 

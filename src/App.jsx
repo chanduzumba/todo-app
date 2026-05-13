@@ -22,8 +22,11 @@ function App() {
   // Add a new task to the list
   const addTask = () => {
     const trimmedTask = task.trim();
-    if (!trimmedTask) return;
-
+    if (!trimmedTask) {
+      setToast({ show: true, message: "Please enter a task." });
+      setTimeout(() => setToast({ show: false, message: "" }), 3000);
+      return;
+    }
     const newTask = {
       id: Date.now(),
       task: trimmedTask,
