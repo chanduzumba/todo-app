@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function ToDo({ todoItem, editTodo, colorClass }) {
+function ToDo({ todoItem, editTodo, deleteTodo, colorClass }) {
   // Track edit mode and updated task text
   const [isEdit, setIsEdit] = useState(false);
   const [newTask, setNewTask] = useState(todoItem.task);
@@ -15,7 +15,7 @@ function ToDo({ todoItem, editTodo, colorClass }) {
 
   return (
     <div
-      className={`todo-card ${colorClass} ${todoItem.isComplete ? "todo-complete" : ""}`}
+      className={`todo-card ${colorClass} ${todoItem.isComplete ? "todo-complete" : ""} hover:shadow-2xl hover:translate-y-1 transition-transform duration-300 ease-in-out rounded-3xl border p-5 shadow-lg shadow-slate-200/70`}
     >
       {/* Edit mode: show input field and save/cancel buttons */}
       {isEdit ? (
@@ -54,7 +54,7 @@ function ToDo({ todoItem, editTodo, colorClass }) {
             >
               {todoItem.task}
             </p>
-            <button className="icon-button shrink-0" aria-label="Delete task">
+            <button className="icon-button shrink-0" aria-label="Delete task" onClick={() => deleteTodo(todoItem.id)}>
               <i className="fas fa-trash"></i>
             </button>
           </div>
