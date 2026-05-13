@@ -9,8 +9,8 @@ function App() {
   );
   // Track the current input value
   const [task, setTask] = useState("");
-  // Track which todo is pending deletion for confirmation modal
-  const [pendingDeleteId, setPendingDeleteId] = useState(null);
+  // Track which action is pending confirmation: delete a task or clear all tasks
+  const [pendingAction, setPendingAction] = useState({ type: null, id: null });
   // Toast notification state
   const [toast, setToast] = useState({ show: false, message: "" });
 
@@ -55,8 +55,8 @@ function App() {
   // Remove a todo from the list
   const handleDelete = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
-    if (pendingDeleteId === id) {
-      setPendingDeleteId(null);
+    if (pendingAction.type === "delete" && pendingAction.id === id) {
+      setPendingAction({ type: null, id: null });
     }
 
     // Show success toast after deletion
@@ -66,14 +66,24 @@ function App() {
 
   // Open the delete confirmation modal
   const requestDelete = (id) => {
-    setPendingDeleteId(id);
+    setPendingAction({ type: "delete", id });
   };
 
-  // Confirm and complete the delete action
-  const confirmDelete = () => {
-    if (pendingDeleteId !== null) {
-      handleDelete(pendingDeleteId);
+  // Open the clear-all confirmation modal
+  const requestClearAll = () => {
+    setPendingAction({ type: "clear", id: null });
+  };
+
+  // Confirm and complete the pending action
+  const confirmAction = () => {
+    if (pendingAction.type === "delete" && pendingAction.id !== null) {
+      handleDelete(pendingAction.id);
+    } else if (pendingAction.type === "clear") {
+      setTodos([]);
+      setToast({ show: true, message: "All tasks cleared successfully!" });
+      setTimeout(() => setToast({ show: false, message: "" }), 3000);
     }
+    setPendingAction({ type: null, id: null });
   };
 
   // Toggle a todo's completion status
@@ -89,7 +99,7 @@ function App() {
     <div className="app-shell px-4 py-8 md:px-10 lg:px-16">
       <Header count={todos.length} />
 
-      <div className="search-bar mx-auto mt-6 flex max-w-3xl flex-col justify-around gap-4 rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-xl shadow-slate-200/80 sm:flex-row sm:items-center">
+      <div className="search-bar mx-auto mt-6 flex max-w-full flex-col justify-center gap-4 rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-xl shadow-slate-200/80 sm:flex-row sm:items-center">
         <input
           type="text"
           placeholder="Add a new task..."
@@ -97,7 +107,7 @@ function App() {
           value={task}
           onChange={(e) => setTask(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && addTask()}
-          className="rounded-2xl border sm:w-3/4 w-full border-slate-300 bg-slate-50 px-4 py-3 text-slate-800 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-100"
+          className="rounded-2xl border sm:w-1/2 w-full border-slate-300 bg-slate-50 px-4 py-3 text-slate-800 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-100"
         />
         <button
           className="rounded-2xl bg-violet-600 px-6 py-3 text-white shadow-lg shadow-violet-200 transition hover:bg-violet-700"
@@ -106,6 +116,14 @@ function App() {
         >
           <i className="fas fa-plus mr-2"></i> Add Task
         </button>
+        {todos.length > 0 && (
+          <button
+            className="rounded-2xl bg-red-600 px-6 py-3 text-white shadow-lg shadow-red-200 transition hover:bg-red-700"
+            onClick={requestClearAll}
+          >
+            Clear All
+          </button>
+        )}
       </div>
 
       {/* Render the list of todos */}
@@ -116,29 +134,30 @@ function App() {
         toggleCompletion={handleCompletion}
       />
 
-      {/* Delete confirmation modal */}
-      {pendingDeleteId !== null && (
+      {/* Shared confirmation modal for delete and clear-all actions */}
+      {pendingAction.type !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-xl shadow-slate-300">
             <h2 className="text-xl font-semibold text-slate-900">
-              Delete task?
+              {pendingAction.type === "delete" ? "Delete task?" : "Clear all tasks?"}
             </h2>
             <p className="mt-3 text-slate-600">
-              Are you sure you want to delete "
-              {todos.find((todo) => todo.id === pendingDeleteId)?.task}"?
+              {pendingAction.type === "delete"
+                ? `Are you sure you want to delete "${todos.find((todo) => todo.id === pendingAction.id)?.task}"?`
+                : "Are you sure you want to remove all tasks? This action cannot be undone."}
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button
                 className="rounded-2xl border border-slate-300 px-4 py-2 text-slate-700"
-                onClick={() => setPendingDeleteId(null)}
+                onClick={() => setPendingAction({ type: null, id: null })}
               >
                 Cancel
               </button>
               <button
                 className="rounded-2xl bg-red-600 px-4 py-2 text-white"
-                onClick={confirmDelete}
+                onClick={confirmAction}
               >
-                Delete
+                {pendingAction.type === "delete" ? "Delete" : "Clear All"}
               </button>
             </div>
           </div>
