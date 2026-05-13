@@ -1,6 +1,6 @@
 import ToDo from "./ToDo";
 
-function ToDoList({ todos, editTodo, deleteTodo }) {
+function ToDoList({ todos, editTodo, deleteTodo, toggleCompletion }) {
   // Array of color gradient classes to cycle through todos
   const colorClasses = ["card-1", "card-2", "card-3", "card-4", "card-5"];
 
@@ -19,6 +19,7 @@ function ToDoList({ todos, editTodo, deleteTodo }) {
             todoItem={todoItem}
             editTodo={editTodo}
             deleteTodo={deleteTodo}
+            toggleCompletion={toggleCompletion}
             colorClass={colorClasses[index % colorClasses.length]}
           />
         ))

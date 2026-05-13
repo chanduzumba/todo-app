@@ -51,8 +51,7 @@ function App() {
 
   // Remove a todo from the list
   const handleDelete = (id) => {
-    const newTodos = todos.filter((todo) => todo.id !== id);
-    setTodos(newTodos);
+    setTodos(todos.filter((todo) => todo.id !== id));
     if (pendingDeleteId === id) {
       setPendingDeleteId(null);
     }
@@ -72,6 +71,15 @@ function App() {
     if (pendingDeleteId !== null) {
       handleDelete(pendingDeleteId);
     }
+  };
+
+  // Toggle a todo's completion status
+  const handleCompletion = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, isComplete: !todo.isComplete } : todo,
+      ),
+    );
   };
 
   return (
@@ -102,6 +110,7 @@ function App() {
         todos={todos}
         editTodo={handleEdit}
         deleteTodo={requestDelete}
+        toggleCompletion={handleCompletion}
       />
 
       {/* Delete confirmation modal */}

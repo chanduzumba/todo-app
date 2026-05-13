@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function ToDo({ todoItem, editTodo, deleteTodo, colorClass }) {
+function ToDo({ todoItem, editTodo, deleteTodo, toggleCompletion, colorClass }) {
   // Track edit mode and updated task text
   const [isEdit, setIsEdit] = useState(false);
   const [newTask, setNewTask] = useState(todoItem.task);
@@ -51,6 +51,7 @@ function ToDo({ todoItem, editTodo, deleteTodo, colorClass }) {
               className={`todo-text-highlight flex-1 cursor-pointer ${todoItem.isComplete ? "line-through opacity-70" : ""}`}
               role="button"
               tabIndex={0}
+              onClick={() => toggleCompletion(todoItem.id)}
             >
               {todoItem.task}
             </p>
@@ -67,7 +68,7 @@ function ToDo({ todoItem, editTodo, deleteTodo, colorClass }) {
               >
                 <i className="fas fa-pen mr-1"></i> Edit
               </button>
-              <button className="inline-text-btn">
+              <button className="inline-text-btn" onClick={() => toggleCompletion(todoItem.id)}>
                 {todoItem.isComplete ? (
                   <>
                     <i className="fas fa-undo mr-1"></i> Undo
