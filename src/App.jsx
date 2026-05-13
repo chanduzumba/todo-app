@@ -36,6 +36,17 @@ function App() {
     setTimeout(() => setToast({ show: false, message: "" }), 3000);
   };
 
+  // Update a todo's task text
+  const handleEdit = (id, newtask) => {
+    setTodos(
+      todos.map((todo) => (todo.id === id ? { ...todo, task: newtask } : todo)),
+    );
+
+    // Show success toast when edit is complete
+    setToast({ show: true, message: "Task edited successfully!" });
+    setTimeout(() => setToast({ show: false, message: "" }), 3000);
+  };
+
   return (
     <div className="app-shell px-4 py-8 md:px-10 lg:px-16">
       <Header count={todos.length} />
@@ -60,9 +71,7 @@ function App() {
       </div>
 
       {/* Render the list of todos */}
-      <ToDoList
-        todos={todos}
-      />
+      <ToDoList todos={todos} editTodo={handleEdit} />
 
       {/* Toast notification */}
       {toast.show && (
